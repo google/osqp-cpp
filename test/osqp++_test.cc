@@ -330,7 +330,7 @@ class TwoDimensionalQpTest : public ::testing::Test {
 TEST_F(TwoDimensionalQpTest, Solves) {
   ASSERT_EQ(solver_.Solve(), OsqpExitCode::kOptimal);
 
-  // NOTE: The convergence guarantees don't imply that the error in
+  // NOTE(ml): The convergence guarantees don't imply that the error in
   // objective_value() is within kTolerance. To be more precise, we could
   // compute the worst error bound in a kTolerance box around the optimal
   // solution, but 2 * kTolerance works here.
@@ -573,7 +573,7 @@ TEST(OsqpTest, UpdateEpsAbs) {
   EXPECT_LT(err2, 1e-5);
 }
 
-// TODO: Missing tests:
+// TODO(ml): Missing tests:
 // - Dual infeasible
 // - Dimension mismatches
 

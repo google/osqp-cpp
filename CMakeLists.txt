@@ -30,10 +30,10 @@ find_package(Eigen3 3.3.7 REQUIRED NO_MODULE)
 # https://github.com/google/googletest/blob/master/googletest/README.md#incorporating-into-an-existing-cmake-project
 # by assuming that abseil-cpp and googletest are downloaded into local
 # subdirectories.
-# TODO: Look at the suggestion in the googletest docs to automatically
+# TODO(ml): Look at the suggestion in the googletest docs to automatically
 # download the source at build time.
 
-# TODO: We do the same for osqp since this was easy to set up, but
+# TODO(ml): We do the same for osqp since this was easy to set up, but
 # consider using find_package instead if it's more convenient for users.
 
 add_subdirectory(abseil-cpp)

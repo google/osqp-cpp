@@ -208,7 +208,7 @@ absl::Status OsqpSolver::Init(const OsqpInstance& instance,
   data.n = num_variables;
   data.m = num_constraints;
 
-  // TODO: This copy could be avoided if the matrix is already upper
+  // TODO(ml): This copy could be avoided if the matrix is already upper
   // triangular.
   Eigen::SparseMatrix<double, Eigen::ColMajor, c_int>
       objective_matrix_upper_triangle =
@@ -603,7 +603,7 @@ absl::Status OsqpSolver::SetObjectiveVector(
   return absl::OkStatus();
 }
 
-// NOTE: osqp_update_lower_bound and osqp_update_upper_bound are not
+// NOTE(ml): osqp_update_lower_bound and osqp_update_upper_bound are not
 // exposed because they have confusing semantics. They immediately error if a
 // new set of bounds is inconsistent with the existing bounds on the other side.
 absl::Status OsqpSolver::SetBounds(const Ref<const VectorXd>& lower_bounds,

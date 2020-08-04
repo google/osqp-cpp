@@ -182,7 +182,7 @@ class OsqpSolver {
   // invalidated by a call to Init() or of the OsqpSolver is deleted.
   Eigen::Map<const Eigen::VectorXd> primal_infeasibility_certificate() const;
 
-  // TODO: Implement dual_infeasibility_certificate.
+  // TODO(ml): Implement dual_infeasibility_certificate.
 
   // Sets a primal and dual warm-start for the next solve. Equivalent to
   // SetPrimalWarmStart(primal_vector) and SetDualWarmStart(dual_vector).
