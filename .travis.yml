@@ -1,0 +1,24 @@
+language: cpp
+
+os: linux
+
+dist: focal
+addons:
+  apt:
+    packages:
+      - cmake
+      - libeigen3-dev
+
+install:
+    - git clone https://github.com/abseil/abseil-cpp.git
+    - git clone --recursive https://github.com/oxfordcontrol/osqp.git
+    - git clone https://github.com/google/googletest.git
+
+script:
+    - mkdir -p build
+    - cd build
+    - cmake ..
+    - make
+    - make test
+
+
