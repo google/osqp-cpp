@@ -111,6 +111,8 @@ $ make
 $ make test
 ```
 
+So far, the interface has been tested only on Linux. Contributions to support
+additional platforms are welcome.
 
 ## FAQ
 
