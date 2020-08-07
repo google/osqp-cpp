@@ -17,6 +17,7 @@ install:
 script:
     - mkdir -p build
     - cd build
-    - cmake ..
+    # Intentionally commented out so that the tests fail.
+    # - cmake ..
     - make
     - make test
