@@ -23,37 +23,35 @@ This is not an officially supported Google product.
 
 OSQP solves the convex quadratic optimization problem:
 
-$$
-\begin{align}
-\min_x \quad& \frac{1}{2} x^TPx + q^Tx \\
-\text{s.t.}\quad & l \le Ax \le u
-\end{align}
-$$
+```
+min_x 0.5 * x'Px + q'x
+s.t.  l <= Ax <= u
+```
 
-where $$P$$ is a symmetric positive semi-definite matrix.
+where `P` is a symmetric positive semi-definite matrix.
 
 The inequalities are component-wise, and equalities may be enforced by setting
-$$l_i = u_i$$ for some row $$i$$. Single-sided inequalities can be enforced by
+`l[i] == u[i]` for some row `i`. Single-sided inequalities can be enforced by
 setting the lower or upper bounds to negative or positive infinity
 (`std::numeric_limits<double>::infinity()`), respectively.
 
-This maps to the `OsqpInstance` struct in `osqp.h` as follows.
+This maps to the `OsqpInstance` struct in `osqp++.h` as follows.
 
--   `objective_matrix` is $$P$$.
--   `objective_vector` is $$q$$.
--   `constraint_matrix` is $$A$$.
--   `lower_bounds` is $$l$$.
--   `upper_bounds` is $$u$$.
+-   `objective_matrix` is `P`.
+-   `objective_vector` is `q`.
+-   `constraint_matrix` is `A`.
+-   `lower_bounds` is `l`.
+-   `upper_bounds` is `u`.
 
 ## Example usage
 
 The code below formulates and solves the following 2-dimensional optimization
 problem:
 
-$$
-\begin{align} \min_{x,y} \quad& x^2 + (1/2)xy + y^2 + x \\
-\text{s.t.}\quad& x \ge 1. \end{align}
-$$
+```
+min_(x,y) x^2 + 0.5 * x * y + y^2 + x
+s.t.      x >= 1
+```
 
 ```C++
 const double kInfinity = std::numeric_limits<double>::infinity();
