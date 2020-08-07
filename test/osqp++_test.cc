@@ -19,7 +19,7 @@
 #include "gtest/gtest.h"
 #include "absl/status/status.h"
 #include "absl/types/span.h"
-#include "eigen3/Eigen/SparseCore"
+#include "Eigen/SparseCore"
 #include "osqp++.h"
 
 namespace osqp {

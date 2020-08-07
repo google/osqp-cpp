@@ -21,10 +21,10 @@
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_format.h"
 #include "absl/strings/string_view.h"
-#include "eigen3/Eigen/Core"
-#include "eigen3/Eigen/SparseCore"
-#include "osqp/include/ctrlc.h"
-#include "osqp/include/osqp.h"
+#include "Eigen/Core"
+#include "Eigen/SparseCore"
+#include "ctrlc.h"
+#include "osqp.h"
 #include "osqp++.h"
 
 // Fails to compile if OSQP's typedefs change. This lets us avoid including
