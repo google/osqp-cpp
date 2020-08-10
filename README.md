@@ -89,7 +89,7 @@ Eigen::VectorXd optimal_solution = solver.primal_solution();
 
 ## Installation
 
-osqp++ requires CMake, a C++17 compiler, and the following packages:
+osqp-cpp requires CMake, a C++17 compiler, and the following packages:
 
 - [OSQP](https://github.com/oxfordcontrol/osqp)
 - [abseil-cpp](https://github.com/abseil/abseil-cpp)
@@ -97,12 +97,19 @@ osqp++ requires CMake, a C++17 compiler, and the following packages:
 - [googletest](https://github.com/google/googletest) (for testing only)
 
 On Debian/Ubuntu systems you may install Eigen via the `libeigen3-dev` package.
-Then run the following:
+
+osqp-cpp will attempt to automatically detect if the necessary targets exist as
+part of the same project. If the necessary `OSQP`, `abseil-cpp`, or `googletest`
+targets are not found, osqp-cpp will attempt to download the sources from their
+GitHub repositories through the use of CMake's `FetchContent` functionality. If
+the `Eigen3` targets are not found, osqp-cpp will attempt to find Eigen3 as a
+system package. To prevent osqp-cpp from unnecessarily downloading target
+dependencies, please ensure that any target dependencies that are already
+available are included before osqp-cpp.
+
+To build osqp-cpp, run the following from the `osqp-cpp` directory:
 
 ```sh
-$ git clone https://github.com/abseil/abseil-cpp.git
-$ git clone --recursive https://github.com/oxfordcontrol/osqp.git
-$ git clone https://github.com/google/googletest.git
 $ mkdir build; cd build
 $ cmake ..
 $ make
