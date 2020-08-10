@@ -124,7 +124,8 @@ additional platforms are welcome.
 -   Is OSQP deterministic?
     -   No, not in its default configuration. Section 5.2 of the OSQP
         [paper](https://arxiv.org/abs/1711.08013) describes that the update rule
-        for $$\rho$$ depends on the ratio between the runtime of the iterations
-        and the runtime of the numerical factorization. Setting `adaptive_rho`
-        to `false` disables this update rule and makes OSQP deterministic, but
-        this could significantly slow down OSQP's convergence.
+        for the step size rho depends on the ratio between the runtime of the
+        iterations and the runtime of the numerical factorization. Setting
+        `adaptive_rho` to `false` disables this update rule and makes OSQP
+        deterministic, but this could significantly slow down OSQP's
+        convergence.
