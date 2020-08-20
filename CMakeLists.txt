@@ -61,6 +61,7 @@ endif()
 # Googletest
 if (NOT TARGET gtest OR NOT TARGET gmock OR NOT TARGET gtest_main)
   message(STATUS "osqp-cpp: `googletest` targets not found. Attempting to fetch contents...")
+  set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
   FetchContent_Declare(
     googletest
     GIT_REPOSITORY https://github.com/google/googletest.git
@@ -74,7 +75,7 @@ endif()
 
 message(STATUS "osqp-cpp: Adding osqp-cpp library...")
 add_library(osqp-cpp src/osqp++.cc)
-target_link_libraries(osqp-cpp PUBLIC absl::strings absl::status Eigen3::Eigen PRIVATE osqpstatic dl)
+target_link_libraries(osqp-cpp PUBLIC absl::strings absl::status Eigen3::Eigen PRIVATE osqpstatic ${CMAKE_DL_LIBS})
 target_include_directories(osqp-cpp PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>")
 message(STATUS "osqp-cpp: Added osqp-cpp library.")
 
