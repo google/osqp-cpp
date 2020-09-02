@@ -19,7 +19,10 @@ project(osqp-cpp)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-enable_testing()
+# Options.
+option(OSQP-CPP_BUILD_TESTS
+  "Whether to build tests." ON
+)
 
 include(FetchContent)
 
@@ -59,18 +62,21 @@ else()
 endif()
 
 # Googletest
-if (NOT TARGET gtest OR NOT TARGET gmock OR NOT TARGET gtest_main)
-  message(STATUS "osqp-cpp: `googletest` targets not found. Attempting to fetch contents...")
-  set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-  FetchContent_Declare(
-    googletest
-    GIT_REPOSITORY https://github.com/google/googletest.git
-    GIT_TAG        origin/master
-  )
-  FetchContent_MakeAvailable(googletest)
-  include(GoogleTest)
-else()
-  message(STATUS "osqp-cpp: `googletest` targets found.")
+if (OSQP-CPP_BUILD_TESTS)
+  enable_testing()
+  if (NOT TARGET gtest OR NOT TARGET gmock OR NOT TARGET gtest_main)
+    message(STATUS "osqp-cpp: `googletest` targets not found. Attempting to fetch contents...")
+    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+    FetchContent_Declare(
+      googletest
+      GIT_REPOSITORY https://github.com/google/googletest.git
+      GIT_TAG        origin/master
+    )
+    FetchContent_MakeAvailable(googletest)
+    include(GoogleTest)
+  else()
+    message(STATUS "osqp-cpp: `googletest` targets found.")
+  endif()
 endif()
 
 message(STATUS "osqp-cpp: Adding osqp-cpp library...")
@@ -80,8 +86,11 @@ target_include_directories(osqp-cpp PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SO
 message(STATUS "osqp-cpp: Added osqp-cpp library.")
 
 # Build and register tests.
-message(STATUS "osqp-cpp: Adding osqp-cpp tests...")
-add_executable(osqp_test test/osqp++_test.cc)
-target_link_libraries(osqp_test gtest gmock gtest_main absl::status absl::span osqp-cpp)
-gtest_discover_tests(osqp_test)
-message(STATUS "osqp-cpp: Added osqp-cpp tests.")
+if (OSQP-CPP_BUILD_TESTS)
+  message(STATUS "osqp-cpp: Adding osqp-cpp tests...")
+  add_executable(osqp_test test/osqp++_test.cc)
+  target_link_libraries(osqp_test gtest gmock gtest_main absl::status absl::span osqp-cpp)
+  gtest_discover_tests(osqp_test)
+  message(STATUS "osqp-cpp: Added osqp-cpp tests.")
+endif()
+
