@@ -16,6 +16,7 @@ addons:
 script:
     - mkdir -p build
     - cd build
-    - /usr/bin/cmake ..
+    # Intentionally commented out so that the tests fail.
+    # - /usr/bin/cmake ..
     - make
     - make test
