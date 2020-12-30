@@ -91,7 +91,7 @@ Eigen::VectorXd optimal_solution = solver.primal_solution();
 
 osqp-cpp requires CMake, a C++17 compiler, and the following packages:
 
-- [OSQP](https://github.com/oxfordcontrol/osqp)
+- [OSQP](https://github.com/oxfordcontrol/osqp) (compiled with 64-bit integers)
 - [abseil-cpp](https://github.com/abseil/abseil-cpp)
 - [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page)
 - [googletest](https://github.com/google/googletest) (for testing only)
