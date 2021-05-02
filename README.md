@@ -115,6 +115,22 @@ $ cmake ..
 $ make
 $ make test
 ```
+### Windows Installation
+
+To install prerequisite packages:
+```sh
+$ vcpkg install eigen3:x64-windows
+$ vcpkg install abseil:x64-windows
+$ vcpkg install gtest:x64-windows
+```
+To build osqp-cpp, run the following from the `osqp-cpp` directory:
+
+```sh
+$ mkdir build; cd build
+$ cmake ..
+$ cmake --build .
+$ cd Debug
+```
 
 So far, the interface has been tested only on Linux. Contributions to support
 additional platforms are welcome.
