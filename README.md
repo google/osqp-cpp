@@ -87,7 +87,7 @@ double optimal_objective = solver.objective_value();
 Eigen::VectorXd optimal_solution = solver.primal_solution();
 ```
 
-## Installation
+## Installation (Unix)
 
 osqp-cpp requires CMake, a C++17 compiler, and the following packages:
 
@@ -116,8 +116,29 @@ $ make
 $ make test
 ```
 
-So far, the interface has been tested only on Linux. Contributions to support
-additional platforms are welcome.
+The interface is regularly tested only on Linux. Contributions to support and
+automatically test additional platforms are welcome.
+
+## Installation (Windows)
+
+*These instructions are maintained by the community.*
+
+Install prerequisite packages:
+
+```sh
+$ vcpkg install eigen3:x64-windows
+$ vcpkg install abseil:x64-windows
+$ vcpkg install gtest:x64-windows
+```
+
+Then, run the following from the `osqp-cpp` directory:
+
+```sh
+$ mkdir build; cd build
+$ cmake ..
+$ cmake --build .
+$ cd Debug
+```
 
 ## FAQ
 
