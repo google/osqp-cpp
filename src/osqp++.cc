@@ -301,7 +301,8 @@ absl::Status VerifySameSparsity(
           "defined matrix.");
     }
   }
-  for (size_t i = 0; i < new_matrix.innerSize(); ++i) {
+
+  for (size_t i = 0; i < new_matrix.nonZeros(); ++i) {
     if (ref_matrix->i[i] != new_matrix.innerIndexPtr()[i]) {
       return absl::InvalidArgumentError(
           "Sparsity of the new matrix differs from the previously "
