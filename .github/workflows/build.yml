@@ -1,0 +1,27 @@
+name: build
+on:
+  push:
+  pull_request:
+  release:
+
+jobs:
+  build:
+    name: Ubuntu latest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install cmake libeigen3-dev
+          cmake --version
+
+      - name: Build and test
+        run: |
+          mkdir -p build
+          cd build
+          cmake ..
+          make
+          make test
+
