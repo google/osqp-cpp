@@ -18,6 +18,7 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/status/status.h"
+#include "absl/status/statusor.h"
 #include "absl/types/span.h"
 #include "Eigen/SparseCore"
 #include "osqp++.h"
@@ -30,7 +31,7 @@ using ::Eigen::Triplet;
 using ::Eigen::VectorXd;
 using ::testing::DoubleNear;
 
-constexpr double kTolerance = 1e-5;
+constexpr double kTolerance = 1.0e-5;
 constexpr double kInfinity = std::numeric_limits<double>::infinity();
 
 void ExpectElementsAre(Eigen::Map<const Eigen::VectorXd> vec,
@@ -525,9 +526,394 @@ VectorXd GetToySolution() {
   return soln;
 }
 
+TEST(OsqpTest, GetAndUpdateRho) {
+  OsqpSettings settings;
+  settings.rho = 3.0e-3;
+
+  OsqpSolver solver;
+  ASSERT_TRUE(solver.Init(GetToyProblem(), settings).ok());
+  ASSERT_EQ(solver.Solve(), OsqpExitCode::kOptimal);
+
+  {
+    const auto rho = solver.GetRho();
+    ASSERT_TRUE(rho.ok());
+    EXPECT_EQ(*rho, 3.0e-3);
+  }
+
+  ASSERT_TRUE(solver.UpdateRho(4.0e-4).ok());
+  {
+    const auto rho = solver.GetRho();
+    ASSERT_TRUE(rho.ok());
+    EXPECT_EQ(*rho, 4.0e-4);
+  }
+}
+
+TEST(OsqpTest, GetSigma) {
+  OsqpSettings settings;
+  settings.sigma = 3.0e-3;
+
+  OsqpSolver solver;
+  ASSERT_TRUE(solver.Init(GetToyProblem(), settings).ok());
+  ASSERT_EQ(solver.Solve(), OsqpExitCode::kOptimal);
+
+  const auto sigma = solver.GetSigma();
+  ASSERT_TRUE(sigma.ok());
+  EXPECT_EQ(*sigma, 3.0e-3);
+}
+
+TEST(OsqpTest, GetScaling) {
+  OsqpSettings settings;
+  settings.scaling = 23;
+
+  OsqpSolver solver;
+  ASSERT_TRUE(solver.Init(GetToyProblem(), settings).ok());
+  ASSERT_EQ(solver.Solve(), OsqpExitCode::kOptimal);
+
+  const auto scaling = solver.GetScaling();
+  ASSERT_TRUE(scaling.ok());
+  EXPECT_EQ(*scaling, 23);
+}
+
+TEST(OsqpTest, GetAdaptiveRho) {
+  OsqpSettings settings;
+  settings.adaptive_rho = false;
+
+  OsqpSolver solver;
+  ASSERT_TRUE(solver.Init(GetToyProblem(), settings).ok());
+  ASSERT_EQ(solver.Solve(), OsqpExitCode::kOptimal);
+
+  const auto adaptive_rho = solver.GetAdaptiveRho();
+  ASSERT_TRUE(adaptive_rho.ok());
+  EXPECT_FALSE(*adaptive_rho);
+}
+
+TEST(OsqpTest, GetAdaptiveRhoInterval) {
+  OsqpSettings settings;
+  settings.adaptive_rho_interval = 12;
+
+  OsqpSolver solver;
+  ASSERT_TRUE(solver.Init(GetToyProblem(), settings).ok());
+  ASSERT_EQ(solver.Solve(), OsqpExitCode::kOptimal);
+
+  const auto adaptive_rho_interval = solver.GetAdaptiveRhoInterval();
+  ASSERT_TRUE(adaptive_rho_interval.ok());
+  EXPECT_EQ(*adaptive_rho_interval, 12);
+}
+
+TEST(OsqpTest, GetAdaptiveRhoTolerance) {
+  OsqpSettings settings;
+  settings.adaptive_rho_tolerance = 17.0;
+
+  OsqpSolver solver;
+  ASSERT_TRUE(solver.Init(GetToyProblem(), settings).ok());
+  ASSERT_EQ(solver.Solve(), OsqpExitCode::kOptimal);
+
+  const auto adaptive_rho_tolerance = solver.GetAdaptiveRhoTolerance();
+  ASSERT_TRUE(adaptive_rho_tolerance.ok());
+  EXPECT_EQ(*adaptive_rho_tolerance, 17);
+}
+
+TEST(OsqpTest, GetAdaptiveRhoFraction) {
+  OsqpSettings settings;
+  settings.adaptive_rho_fraction = 3.4;
+
+  OsqpSolver solver;
+  ASSERT_TRUE(solver.Init(GetToyProblem(), settings).ok());
+  ASSERT_EQ(solver.Solve(), OsqpExitCode::kOptimal);
+
+  const auto adaptive_rho_fraction = solver.GetAdaptiveRhoFraction();
+  ASSERT_TRUE(adaptive_rho_fraction.ok());
+  EXPECT_EQ(*adaptive_rho_fraction, 3.4);
+}
+
+TEST(OsqpTest, GetAndUpdateEpsAbs) {
+  OsqpSettings settings;
+  settings.eps_abs = 3.0e-3;
+
+  OsqpSolver solver;
+  ASSERT_TRUE(solver.Init(GetToyProblem(), settings).ok());
+  ASSERT_EQ(solver.Solve(), OsqpExitCode::kOptimal);
+
+  {
+    const auto eps_abs = solver.GetEpsAbs();
+    ASSERT_TRUE(eps_abs.ok());
+    EXPECT_EQ(*eps_abs, 3.0e-3);
+  }
+
+  ASSERT_TRUE(solver.UpdateEpsAbs(4.0e-4).ok());
+  {
+    const auto eps_abs = solver.GetEpsAbs();
+    ASSERT_TRUE(eps_abs.ok());
+    EXPECT_EQ(*eps_abs, 4.0e-4);
+  }
+}
+
+TEST(OsqpTest, GetAndUpdateEpsRel) {
+  OsqpSettings settings;
+  settings.eps_rel = 3.0e-3;
+
+  OsqpSolver solver;
+  ASSERT_TRUE(solver.Init(GetToyProblem(), settings).ok());
+  ASSERT_EQ(solver.Solve(), OsqpExitCode::kOptimal);
+
+  {
+    const auto eps_rel = solver.GetEpsRel();
+    ASSERT_TRUE(eps_rel.ok());
+    EXPECT_EQ(*eps_rel, 3.0e-3);
+  }
+
+  ASSERT_TRUE(solver.UpdateEpsRel(4.0e-4).ok());
+  {
+    const auto eps_rel = solver.GetEpsRel();
+    ASSERT_TRUE(eps_rel.ok());
+    EXPECT_EQ(*eps_rel, 4.0e-4);
+  }
+}
+
+TEST(OsqpTest, GetAndUpdateEpsPrimInf) {
+  OsqpSettings settings;
+  settings.eps_prim_inf = 3.0e-3;
+
+  OsqpSolver solver;
+  ASSERT_TRUE(solver.Init(GetToyProblem(), settings).ok());
+  ASSERT_EQ(solver.Solve(), OsqpExitCode::kOptimal);
+
+  {
+    const auto eps_prim_inf = solver.GetEpsPrimInf();
+    ASSERT_TRUE(eps_prim_inf.ok());
+    EXPECT_EQ(*eps_prim_inf, 3.0e-3);
+  }
+
+  ASSERT_TRUE(solver.UpdateEpsPrimInf(4.0e-4).ok());
+  {
+    const auto eps_prim_inf = solver.GetEpsPrimInf();
+    ASSERT_TRUE(eps_prim_inf.ok());
+    EXPECT_EQ(*eps_prim_inf, 4.0e-4);
+  }
+}
+
+TEST(OsqpTest, GetAndUpdateEpsDualInf) {
+  OsqpSettings settings;
+  settings.eps_dual_inf = 3.0e-3;
+
+  OsqpSolver solver;
+  ASSERT_TRUE(solver.Init(GetToyProblem(), settings).ok());
+  ASSERT_EQ(solver.Solve(), OsqpExitCode::kOptimal);
+
+  {
+    const auto eps_dual_inf = solver.GetEpsDualInf();
+    ASSERT_TRUE(eps_dual_inf.ok());
+    EXPECT_EQ(*eps_dual_inf, 3.0e-3);
+  }
+  ASSERT_TRUE(solver.UpdateEpsDualInf(4.0e-4).ok());
+  {
+    const auto eps_dual_inf = solver.GetEpsDualInf();
+    ASSERT_TRUE(eps_dual_inf.ok());
+    EXPECT_EQ(*eps_dual_inf, 4.0e-4);
+  }
+}
+
+TEST(OsqpTest, GetAndUpdateAlpha) {
+  OsqpSettings settings;
+  settings.alpha = 3.0e-3;
+
+  OsqpSolver solver;
+  ASSERT_TRUE(solver.Init(GetToyProblem(), settings).ok());
+  ASSERT_EQ(solver.Solve(), OsqpExitCode::kOptimal);
+
+  {
+    const auto alpha = solver.GetAlpha();
+    ASSERT_TRUE(alpha.ok());
+    EXPECT_EQ(*alpha, 3.0e-3);
+  }
+
+  ASSERT_TRUE(solver.UpdateAlpha(4.0e-4).ok());
+  {
+    const auto alpha = solver.GetAlpha();
+    ASSERT_TRUE(alpha.ok());
+    EXPECT_EQ(*alpha, 4.0e-4);
+  }
+}
+
+TEST(OsqpTest, GetAndUpdateDelta) {
+  OsqpSettings settings;
+  settings.delta = 3.0e-3;
+
+  OsqpSolver solver;
+  ASSERT_TRUE(solver.Init(GetToyProblem(), settings).ok());
+  ASSERT_EQ(solver.Solve(), OsqpExitCode::kOptimal);
+
+  {
+    const auto delta = solver.GetDelta();
+    ASSERT_TRUE(delta.ok());
+    EXPECT_EQ(*delta, 3.0e-3);
+  }
+
+  ASSERT_TRUE(solver.UpdateDelta(4.0e-4).ok());
+  {
+    const auto delta = solver.GetDelta();
+    ASSERT_TRUE(delta.ok());
+    EXPECT_EQ(*delta, 4.0e-4);
+  }
+}
+
+TEST(OsqpTest, GetAndUpdatePolish) {
+  OsqpSettings settings;
+  settings.polish = true;
+
+  OsqpSolver solver;
+  ASSERT_TRUE(solver.Init(GetToyProblem(), settings).ok());
+  ASSERT_EQ(solver.Solve(), OsqpExitCode::kOptimal);
+
+  {
+    const auto polish = solver.GetPolish();
+    ASSERT_TRUE(polish.ok());
+    EXPECT_TRUE(*polish);
+  }
+
+  ASSERT_TRUE(solver.UpdatePolish(false).ok());
+  {
+    const auto polish = solver.GetPolish();
+    ASSERT_TRUE(polish.ok());
+    EXPECT_FALSE(*polish);
+  }
+}
+
+TEST(OsqpTest, GetAndUpdatePolishRefineIter) {
+  OsqpSettings settings;
+  settings.polish_refine_iter = 12;
+
+  OsqpSolver solver;
+  ASSERT_TRUE(solver.Init(GetToyProblem(), settings).ok());
+  ASSERT_EQ(solver.Solve(), OsqpExitCode::kOptimal);
+
+  {
+    const auto polish_refine_iter = solver.GetPolishRefineIter();
+    ASSERT_TRUE(polish_refine_iter.ok());
+    EXPECT_EQ(*polish_refine_iter, 12);
+  }
+
+  ASSERT_TRUE(solver.UpdatePolishRefineIter(13).ok());
+  {
+    const auto polish_refine_iter = solver.GetPolishRefineIter();
+    ASSERT_TRUE(polish_refine_iter.ok());
+    EXPECT_EQ(*polish_refine_iter, 13);
+  }
+}
+
+TEST(OsqpTest, GetAndUpdateVerbose) {
+  OsqpSettings settings;
+  settings.verbose = false;
+
+  OsqpSolver solver;
+  ASSERT_TRUE(solver.Init(GetToyProblem(), settings).ok());
+  ASSERT_EQ(solver.Solve(), OsqpExitCode::kOptimal);
+
+  {
+    const auto verbose = solver.GetVerbose();
+    ASSERT_TRUE(verbose.ok());
+    EXPECT_FALSE(*verbose);
+  }
+
+  ASSERT_TRUE(solver.UpdateVerbose(true).ok());
+  {
+    const auto verbose = solver.GetVerbose();
+    ASSERT_TRUE(verbose.ok());
+    EXPECT_TRUE(*verbose);
+  }
+}
+
+TEST(OsqpTest, GetAndUpdateScaledTermination) {
+  OsqpSettings settings;
+  settings.scaled_termination = true;
+
+  OsqpSolver solver;
+  ASSERT_TRUE(solver.Init(GetToyProblem(), settings).ok());
+  ASSERT_EQ(solver.Solve(), OsqpExitCode::kOptimal);
+
+  {
+    const auto scaled_termination = solver.GetScaledTermination();
+    ASSERT_TRUE(scaled_termination.ok());
+    EXPECT_TRUE(*scaled_termination);
+  }
+
+  ASSERT_TRUE(solver.UpdateScaledTermination(false).ok());
+  {
+    const auto scaled_termination = solver.GetScaledTermination();
+    ASSERT_TRUE(scaled_termination.ok());
+    EXPECT_FALSE(*scaled_termination);
+  }
+}
+
+TEST(OsqpTest, GetAndUpdateCheckTermination) {
+  OsqpSettings settings;
+  settings.check_termination = 12;
+
+  OsqpSolver solver;
+  ASSERT_TRUE(solver.Init(GetToyProblem(), settings).ok());
+  ASSERT_EQ(solver.Solve(), OsqpExitCode::kOptimal);
+
+  {
+    const auto check_termination = solver.GetCheckTermination();
+    ASSERT_TRUE(check_termination.ok());
+    EXPECT_EQ(*check_termination, 12);
+  }
+
+  ASSERT_TRUE(solver.UpdateCheckTermination(13).ok());
+  {
+    const auto check_termination = solver.GetCheckTermination();
+    ASSERT_TRUE(check_termination.ok());
+    EXPECT_EQ(*check_termination, 13);
+  }
+}
+
+TEST(OsqpTest, GetAndUpdateWarmStart) {
+  OsqpSettings settings;
+  settings.warm_start = false;
+
+  OsqpSolver solver;
+  ASSERT_TRUE(solver.Init(GetToyProblem(), settings).ok());
+  ASSERT_EQ(solver.Solve(), OsqpExitCode::kOptimal);
+
+  {
+    const auto warm_start = solver.GetWarmStart();
+    ASSERT_TRUE(warm_start.ok());
+    EXPECT_FALSE(*warm_start);
+  }
+
+  ASSERT_TRUE(solver.UpdateWarmStart(true).ok());
+  {
+    const auto warm_start = solver.GetWarmStart();
+    ASSERT_TRUE(warm_start.ok());
+    EXPECT_TRUE(*warm_start);
+  }
+}
+
+TEST(OsqpTest, GetAndUpdateTimeLimit) {
+  OsqpSettings settings;
+  settings.time_limit = 20.0;
+
+  OsqpSolver solver;
+  ASSERT_TRUE(solver.Init(GetToyProblem(), settings).ok());
+  ASSERT_EQ(solver.Solve(), OsqpExitCode::kOptimal);
+
+  {
+    const auto time_limit = solver.GetTimeLimit();
+    ASSERT_TRUE(time_limit.ok());
+    EXPECT_EQ(*time_limit, 20.0);
+  }
+
+  ASSERT_TRUE(solver.UpdateTimeLimit(35.0).ok());
+  {
+    const auto time_limit = solver.GetTimeLimit();
+    ASSERT_TRUE(time_limit.ok());
+    EXPECT_EQ(*time_limit, 35.0);
+  }
+}
+
 TEST(OsqpTest, UpdateMaxIter) {
   OsqpSettings settings;
-  settings.eps_abs = 1e-6;
+  settings.eps_abs = 1.0e-6;
   settings.max_iter = 1;
 
   // Try solving an easy problem and verify that we only used one iteration.
@@ -563,14 +949,14 @@ TEST(OsqpTest, UpdateEpsAbs) {
   const double err1 = (solver.primal_solution() - GetToySolution()).norm();
 
   // Now set a much tighter eps_abs and solve again.
-  ASSERT_TRUE(solver.UpdateEpsAbs(1e-7).ok());
+  ASSERT_TRUE(solver.UpdateEpsAbs(1.0e-7).ok());
   ASSERT_EQ(solver.Solve(), OsqpExitCode::kOptimal);
   const double err2 = (solver.primal_solution() - GetToySolution()).norm();
 
   // We should have ended up with a significantly smaller error the second time.
   EXPECT_LT(100 * err2, err1);
   // And we should be nearly optimal.
-  EXPECT_LT(err2, 1e-5);
+  EXPECT_LT(err2, 1.0e-5);
 }
 
 // TODO(ml): Missing tests:

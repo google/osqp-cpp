@@ -22,6 +22,7 @@
 
 #include "absl/base/attributes.h"
 #include "absl/status/status.h"
+#include "absl/status/statusor.h"
 #include "Eigen/Core"
 #include "Eigen/SparseCore"
 
@@ -160,8 +161,8 @@ class OsqpSolver {
   // is false.
   double objective_value() const;
 
-  // The primal solution, i.e., x. The Map is valid only for the lifetime of the
-  // OSQP workspace. It will be invalidated by a call to Init() or if the
+  // The primal solution, i.e., x. The Map is valid only for the lifetime of
+  // the OSQP workspace. It will be invalidated by a call to Init() or if the
   // OsqpSolver is deleted. CHECK-fails if IsInitialized() is false.
   // Implementation details (do not depend on these): The underlying memory is
   // overwritten by SetPrimalWarmStart(). Modification of the problem data does
@@ -230,22 +231,200 @@ class OsqpSolver {
   absl::Status SetBounds(const Eigen::Ref<const Eigen::VectorXd>& lower_bounds,
                          const Eigen::Ref<const Eigen::VectorXd>& upper_bounds);
 
-  // Updates the max_iter setting for this solver.  Returns:
+  // Gets the current value of the rho setting, i.e., the ADMM rho step. Returns
+  // a FailedPreconditionError if IsInitialized() is false.
+  absl::StatusOr<double> GetRho() const;
+
+  // Gets the current value of the sigma setting, i.e., the ADMM sigma step.
+  // Returns a FailedPreconditionError if IsInitialized() is false.
+  absl::StatusOr<double> GetSigma() const;
+
+  // Gets the current value of the scaling setting, i.e., the number of
+  // heuristic scaling iterations. Returns a FailedPreconditionError if
+  // IsInitialized() is false.
+  absl::StatusOr<c_int> GetScaling() const;
+
+  // Gets the current value of the adaptive_rho setting, i.e., whether the rho
+  // step size is adaptively set. Returns a FailedPreconditionError if
+  // IsInitialized() is false.
+  absl::StatusOr<bool> GetAdaptiveRho() const;
+
+  // Gets the current value of the adaptive_rho_interval setting, i.e., the
+  // number of iterations between rho adaptations. Returns a
+  // FailedPreconditionError if IsInitialized() is false.
+  absl::StatusOr<c_int> GetAdaptiveRhoInterval() const;
+
+  // Gets the current value of the adaptive_rho_tolerance setting, i.e., the
+  // tolerance X for adapting rho (the new value must be X times larger, or 1/X
+  // times smaller, than the current value). Returns a FailedPreconditionError
+  // if IsInitialized() is false.
+  absl::StatusOr<double> GetAdaptiveRhoTolerance() const;
+
+  // Gets the current value of the adaptive_rho_fraction setting, i.e., in
+  // automatic mode (adaptive_rho_interval = 0), what fraction of setup time is
+  // spent on selecting rho. Returns a FailedPreconditionError if
+  // IsInitialized() is false.
+  absl::StatusOr<double> GetAdaptiveRhoFraction() const;
+
+  // Gets the current value of the max_iter setting, i.e., the maximum number of
+  // iterations. Returns a FailedPreconditionError if IsInitialized() is false.
+  absl::StatusOr<c_int> GetMaxIter() const;
+
+  // Gets the current value of the eps_abs setting, i.e., the absolute error
+  // tolerance for convergence. Returns a FailedPreconditionError if
+  // IsInitialized() is false.
+  absl::StatusOr<double> GetEpsAbs() const;
+
+  // Gets the current value of the eps_rel setting, i.e., the relative error
+  // tolerance for convergence. Returns a FailedPreconditionError if
+  // IsInitialized() is false.
+  absl::StatusOr<double> GetEpsRel() const;
+
+  // Gets the current value of the eps_prim_inf setting, i.e., the absolute
+  // error tolerance for primal infeasibility. Returns a FailedPreconditionError
+  // if IsInitialized() is false.
+  absl::StatusOr<double> GetEpsPrimInf() const;
+
+  // Gets the current value of the eps_dual_inf setting, i.e., the absolute
+  // error tolerance for dual infeasibility. Returns a FailedPreconditionError
+  // if IsInitialized() is false.
+  absl::StatusOr<double> GetEpsDualInf() const;
+
+  // Gets the current value of the alpha setting, i.e., the ADMM overrelaxation
+  // parameter. Returns a FailedPreconditionError if IsInitialized() is false.
+  absl::StatusOr<double> GetAlpha() const;
+
+  // Gets the current value of the delta setting, i.e., the polishing
+  // regularization parameter. Returns a FailedPreconditionError if
+  // IsInitialized() is false.
+  absl::StatusOr<double> GetDelta() const;
+
+  // Gets the current value of the polish setting, i.e., whether polishing is
+  // performed. Returns a FailedPreconditionError if IsInitialized() is false.
+  absl::StatusOr<bool> GetPolish() const;
+
+  // Gets the current value of the polish_refine_iter setting, i.e., the number
+  // of refinement iterations in polishing. Returns a FailedPreconditionError if
+  // IsInitialized() is false.
+  absl::StatusOr<c_int> GetPolishRefineIter() const;
+
+  // Gets the current value of the verbose setting, i.e., whether solver output
+  // is printed. Returns a FailedPreconditionError if IsInitialized() is false.
+  absl::StatusOr<bool> GetVerbose() const;
+
+  // Gets the current value of the scaled_termination setting, i.e., whether
+  // scaled termination criteria is used. Returns a FailedPreconditionError if
+  // IsInitialized() is false.
+  absl::StatusOr<bool> GetScaledTermination() const;
+
+  // Gets the current value of the check_termination setting, i.e., the interval
+  // for checking termination. Returns a FailedPreconditionError if
+  // IsInitialized() is false.
+  absl::StatusOr<c_int> GetCheckTermination() const;
+
+  // Gets the current value of the warm_start setting, i.e., if warm starting is
+  // performed. Returns a FailedPreconditionError if IsInitialized() is false.
+  absl::StatusOr<bool> GetWarmStart() const;
+
+  // Gets the current value of the time_limit setting, i.e., the time limit as
+  // expressed in seconds. Returns a FailedPreconditionError if IsInitialized()
+  // is false.
+  absl::StatusOr<double> GetTimeLimit() const;
+
+  // Updates the rho setting, i.e., the ADMM rho step. Returns:
+  // - FailedPreconditionError if IsInitialized() is false
+  // - InvalidArgumentError if rho_new <= 0.0
+  // - OkStatus on success
+  absl::Status UpdateRho(double rho_new);
+
+  // Updates the max_iter setting, i.e., the maximum number of iterations.
+  // Returns:
   // - FailedPreconditionError if IsInitialized() is false
   // - InvalidArgumentError if max_iter_new <= 0
   // - OkStatus on success
   absl::Status UpdateMaxIter(int max_iter_new);
 
-  // Updates the eps_abs setting for this solver.  Returns:
+  // Updates the eps_abs setting, i.e., the absolute error tolerance for
+  // convergence. Returns:
   // - FailedPreconditionError if IsInitialized() is false
-  // - InvalidArgumentError if eps_abs_new <= 0.0
+  // - InvalidArgumentError if eps_abs_new < 0.0
   // - OkStatus on success
   absl::Status UpdateEpsAbs(double eps_abs_new);
 
-  // Updates the time_limit setting for this solver.
-  // The time limit is expressed in seconds.
-  // Setting the time limit to zero disables time-limiting.
+  // Updates the eps_rel setting, i.e., the relative error tolerance for
+  // convergence. Returns:
+  // - FailedPreconditionError if IsInitialized() is false
+  // - InvalidArgumentError if eps_rel_new < 0.0
+  // - OkStatus on success
+  absl::Status UpdateEpsRel(double eps_rel_new);
+
+  // Updates the eps_prim_inf setting, i.e., the absolute error tolerance for
+  // primal infeasibility. Returns:
+  // - FailedPreconditionError if IsInitialized() is false
+  // - InvalidArgumentError if eps_prim_inf_new < 0.0
+  // - OkStatus on success
+  absl::Status UpdateEpsPrimInf(double eps_prim_inf_new);
+
+  // Updates the eps_dual_inf setting, i.e., the absolute error tolerance for
+  // dual infeasibility. Returns:
+  // - FailedPreconditionError if IsInitialized() is false
+  // - InvalidArgumentError if eps_dual_inf_new < 0.0
+  // - OkStatus on success
+  absl::Status UpdateEpsDualInf(double eps_dual_inf_new);
+
+  // Updates the alpha setting, i.e., the ADMM overrelaxation parameter.
   // Returns:
+  // - FailedPreconditionError if IsInitialized() is false
+  // - InvalidArgumentError if !(0 < alpha_new < 2)
+  // - OkStatus on success
+  absl::Status UpdateAlpha(double alpha_new);
+
+  // Updates the delta setting, i.e., the polishing regularization parameter.
+  // Returns:
+  // - FailedPreconditionError if IsInitialized() is false
+  // - InvalidArgumentError if delta_new <= 0.0
+  // - OkStatus on success
+  absl::Status UpdateDelta(double delta_new);
+
+  // Updates the polish setting, i.e., whether polishing is performed. Returns:
+  // - FailedPreconditionError if IsInitialized() is false
+  // - OkStatus on success
+  absl::Status UpdatePolish(bool polish_new);
+
+  // Updates the polish_refine_iter setting, i.e., the number of refinement
+  // iterations in polishing. Returns:
+  // - FailedPreconditionError if IsInitialized() is false
+  // - InvalidArgumentError if polish_refine_iter_new <= 0.0
+  // - OkStatus on success
+  absl::Status UpdatePolishRefineIter(int polish_refine_iter_new);
+
+  // Updates the verbose setting, i.e., whether solver output is printed.
+  // Returns:
+  // - FailedPreconditionError if IsInitialized() is false
+  // - OkStatus on success
+  absl::Status UpdateVerbose(bool verbose_new);
+
+  // Updates the scaled_termination setting, i.e., whether scaled termination
+  // criteria is used. Returns:
+  // - FailedPreconditionError if IsInitialized() is false
+  // - OkStatus on success
+  absl::Status UpdateScaledTermination(bool scaled_termination_new);
+
+  // Updates the check_termination setting, i.e., the interval for checking
+  // termination. Setting to zero disables termination checking. Returns:
+  // - FailedPreconditionError if IsInitialized() is false
+  // - InvalidArgumentError if check_termination_new < 0.0
+  // - OkStatus on success
+  absl::Status UpdateCheckTermination(c_int check_termination_new);
+
+  // Updates the warm_start setting, i.e., whether warm starting is performed.
+  // Returns:
+  // - FailedPreconditionError if IsInitialized() is false
+  // - OkStatus on success
+  absl::Status UpdateWarmStart(bool warm_start_new);
+
+  // Updates the time_limit setting, i.e., the time limit as expressed in
+  // seconds. Setting the time limit to zero disables time-limiting. Returns:
   // - FailedPreconditionError if IsInitialized() is false
   // - InvalidArgumentError if time_limit_new < 0.0
   // - OkStatus on success

@@ -18,6 +18,7 @@
 #include <type_traits>
 
 #include "absl/status/status.h"
+#include "absl/status/statusor.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_format.h"
 #include "absl/strings/string_view.h"
@@ -634,7 +635,168 @@ absl::Status OsqpSolver::SetBounds(const Ref<const VectorXd>& lower_bounds,
   return absl::OkStatus();
 }
 
-absl::Status OsqpSolver::UpdateMaxIter(int max_iter_new) {
+absl::StatusOr<double> OsqpSolver::GetRho() const {
+  if (!IsInitialized()) {
+    return absl::FailedPreconditionError("OsqpSolver is not initialized.");
+  }
+  return workspace_->settings->rho;
+}
+
+absl::StatusOr<double> OsqpSolver::GetSigma() const {
+  if (!IsInitialized()) {
+    return absl::FailedPreconditionError("OsqpSolver is not initialized.");
+  }
+  return workspace_->settings->sigma;
+}
+
+absl::StatusOr<c_int> OsqpSolver::GetScaling() const {
+  if (!IsInitialized()) {
+    return absl::FailedPreconditionError("OsqpSolver is not initialized.");
+  }
+  return workspace_->settings->scaling;
+}
+
+absl::StatusOr<bool> OsqpSolver::GetAdaptiveRho() const {
+  if (!IsInitialized()) {
+    return absl::FailedPreconditionError("OsqpSolver is not initialized.");
+  }
+  return workspace_->settings->adaptive_rho;
+}
+
+absl::StatusOr<c_int> OsqpSolver::GetAdaptiveRhoInterval() const {
+  if (!IsInitialized()) {
+    return absl::FailedPreconditionError("OsqpSolver is not initialized.");
+  }
+  return workspace_->settings->adaptive_rho_interval;
+}
+
+absl::StatusOr<double> OsqpSolver::GetAdaptiveRhoTolerance() const {
+  if (!IsInitialized()) {
+    return absl::FailedPreconditionError("OsqpSolver is not initialized.");
+  }
+  return workspace_->settings->adaptive_rho_tolerance;
+}
+
+absl::StatusOr<double> OsqpSolver::GetAdaptiveRhoFraction() const {
+  if (!IsInitialized()) {
+    return absl::FailedPreconditionError("OsqpSolver is not initialized.");
+  }
+  return workspace_->settings->adaptive_rho_fraction;
+}
+
+absl::StatusOr<c_int> OsqpSolver::GetMaxIter() const {
+  if (!IsInitialized()) {
+    return absl::FailedPreconditionError("OsqpSolver is not initialized.");
+  }
+  return workspace_->settings->max_iter;
+}
+
+absl::StatusOr<double> OsqpSolver::GetEpsAbs() const {
+  if (!IsInitialized()) {
+    return absl::FailedPreconditionError("OsqpSolver is not initialized.");
+  }
+  return workspace_->settings->eps_abs;
+}
+
+absl::StatusOr<double> OsqpSolver::GetEpsRel() const {
+  if (!IsInitialized()) {
+    return absl::FailedPreconditionError("OsqpSolver is not initialized.");
+  }
+  return workspace_->settings->eps_rel;
+}
+
+absl::StatusOr<double> OsqpSolver::GetEpsPrimInf() const {
+  if (!IsInitialized()) {
+    return absl::FailedPreconditionError("OsqpSolver is not initialized.");
+  }
+  return workspace_->settings->eps_prim_inf;
+}
+
+absl::StatusOr<double> OsqpSolver::GetEpsDualInf() const {
+  if (!IsInitialized()) {
+    return absl::FailedPreconditionError("OsqpSolver is not initialized.");
+  }
+  return workspace_->settings->eps_dual_inf;
+}
+
+absl::StatusOr<double> OsqpSolver::GetAlpha() const {
+  if (!IsInitialized()) {
+    return absl::FailedPreconditionError("OsqpSolver is not initialized.");
+  }
+  return workspace_->settings->alpha;
+}
+
+absl::StatusOr<double> OsqpSolver::GetDelta() const {
+  if (!IsInitialized()) {
+    return absl::FailedPreconditionError("OsqpSolver is not initialized.");
+  }
+  return workspace_->settings->delta;
+}
+
+absl::StatusOr<bool> OsqpSolver::GetPolish() const {
+  if (!IsInitialized()) {
+    return absl::FailedPreconditionError("OsqpSolver is not initialized.");
+  }
+  return workspace_->settings->polish;
+}
+
+absl::StatusOr<c_int> OsqpSolver::GetPolishRefineIter() const {
+  if (!IsInitialized()) {
+    return absl::FailedPreconditionError("OsqpSolver is not initialized.");
+  }
+  return workspace_->settings->polish_refine_iter;
+}
+
+absl::StatusOr<bool> OsqpSolver::GetVerbose() const {
+  if (!IsInitialized()) {
+    return absl::FailedPreconditionError("OsqpSolver is not initialized.");
+  }
+  return workspace_->settings->verbose;
+}
+
+absl::StatusOr<bool> OsqpSolver::GetScaledTermination() const {
+  if (!IsInitialized()) {
+    return absl::FailedPreconditionError("OsqpSolver is not initialized.");
+  }
+  return workspace_->settings->scaled_termination;
+}
+
+absl::StatusOr<c_int> OsqpSolver::GetCheckTermination() const {
+  if (!IsInitialized()) {
+    return absl::FailedPreconditionError("OsqpSolver is not initialized.");
+  }
+  return workspace_->settings->check_termination;
+}
+
+absl::StatusOr<bool> OsqpSolver::GetWarmStart() const {
+  if (!IsInitialized()) {
+    return absl::FailedPreconditionError("OsqpSolver is not initialized.");
+  }
+  return workspace_->settings->warm_start;
+}
+
+absl::StatusOr<double> OsqpSolver::GetTimeLimit() const {
+  if (!IsInitialized()) {
+    return absl::FailedPreconditionError("OsqpSolver is not initialized.");
+  }
+  return workspace_->settings->time_limit;
+}
+
+absl::Status OsqpSolver::UpdateRho(const double rho_new) {
+  if (!IsInitialized()) {
+    return absl::FailedPreconditionError("OsqpSolver is not initialized.");
+  }
+  if (rho_new <= 0) {
+    return absl::InvalidArgumentError(
+        absl::StrCat("Invalid rho value: ", rho_new));
+  }
+  if (osqp_update_rho(workspace_.get(), rho_new) != 0) {
+    return absl::UnknownError("osqp_update_rho unexpectedly failed.");
+  }
+  return absl::OkStatus();
+}
+
+absl::Status OsqpSolver::UpdateMaxIter(const int max_iter_new) {
   if (!IsInitialized()) {
     return absl::FailedPreconditionError("OsqpSolver is not initialized.");
   }
@@ -648,11 +810,11 @@ absl::Status OsqpSolver::UpdateMaxIter(int max_iter_new) {
   return absl::OkStatus();
 }
 
-absl::Status OsqpSolver::UpdateEpsAbs(double eps_abs_new) {
+absl::Status OsqpSolver::UpdateEpsAbs(const double eps_abs_new) {
   if (!IsInitialized()) {
     return absl::FailedPreconditionError("OsqpSolver is not initialized.");
   }
-  if (eps_abs_new <= 0.0) {
+  if (eps_abs_new < 0.0) {
     return absl::InvalidArgumentError(
         absl::StrCat("Invalid eps_abs value: ", eps_abs_new));
   }
@@ -662,7 +824,154 @@ absl::Status OsqpSolver::UpdateEpsAbs(double eps_abs_new) {
   return absl::OkStatus();
 }
 
-absl::Status OsqpSolver::UpdateTimeLimit(double time_limit_new) {
+absl::Status OsqpSolver::UpdateEpsRel(const double eps_rel_new) {
+  if (!IsInitialized()) {
+    return absl::FailedPreconditionError("OsqpSolver is not initialized.");
+  }
+  if (eps_rel_new < 0.0) {
+    return absl::InvalidArgumentError(
+        absl::StrCat("Invalid eps_rel value: ", eps_rel_new));
+  }
+  if (osqp_update_eps_rel(workspace_.get(), eps_rel_new) != 0) {
+    return absl::UnknownError("osqp_update_eps_rel unexpectedly failed.");
+  }
+  return absl::OkStatus();
+}
+
+absl::Status OsqpSolver::UpdateEpsPrimInf(const double eps_prim_inf_new) {
+  if (!IsInitialized()) {
+    return absl::FailedPreconditionError("OsqpSolver is not initialized.");
+  }
+  if (eps_prim_inf_new < 0.0) {
+    return absl::InvalidArgumentError(
+        absl::StrCat("Invalid eps_prim_inf value: ", eps_prim_inf_new));
+  }
+  if (osqp_update_eps_prim_inf(workspace_.get(), eps_prim_inf_new) != 0) {
+    return absl::UnknownError("osqp_update_eps_prim_inf unexpectedly failed.");
+  }
+  return absl::OkStatus();
+}
+
+absl::Status OsqpSolver::UpdateEpsDualInf(const double eps_dual_inf_new) {
+  if (!IsInitialized()) {
+    return absl::FailedPreconditionError("OsqpSolver is not initialized.");
+  }
+  if (eps_dual_inf_new < 0.0) {
+    return absl::InvalidArgumentError(
+        absl::StrCat("Invalid eps_dual_inf value: ", eps_dual_inf_new));
+  }
+  if (osqp_update_eps_dual_inf(workspace_.get(), eps_dual_inf_new) != 0) {
+    return absl::UnknownError("osqp_update_eps_dual_inf unexpectedly failed.");
+  }
+  return absl::OkStatus();
+}
+
+absl::Status OsqpSolver::UpdateAlpha(const double alpha_new) {
+  if (!IsInitialized()) {
+    return absl::FailedPreconditionError("OsqpSolver is not initialized.");
+  }
+  if (alpha_new <= 0.0 || alpha_new >= 2) {
+    return absl::InvalidArgumentError(
+        absl::StrCat("Invalid alpha value: ", alpha_new));
+  }
+  if (osqp_update_alpha(workspace_.get(), alpha_new) != 0) {
+    return absl::UnknownError("osqp_update_alpha unexpectedly failed.");
+  }
+  return absl::OkStatus();
+}
+
+absl::Status OsqpSolver::UpdateDelta(const double delta_new) {
+  if (!IsInitialized()) {
+    return absl::FailedPreconditionError("OsqpSolver is not initialized.");
+  }
+  if (delta_new <= 0.0) {
+    return absl::InvalidArgumentError(
+        absl::StrCat("Invalid delta value: ", delta_new));
+  }
+  if (osqp_update_delta(workspace_.get(), delta_new) != 0) {
+    return absl::UnknownError("osqp_update_delta unexpectedly failed.");
+  }
+  return absl::OkStatus();
+}
+
+absl::Status OsqpSolver::UpdatePolish(const bool polish_new) {
+  if (!IsInitialized()) {
+    return absl::FailedPreconditionError("OsqpSolver is not initialized.");
+  }
+  if (osqp_update_polish(workspace_.get(), polish_new) != 0) {
+    return absl::UnknownError("osqp_update_polish unexpectedly failed.");
+  }
+  return absl::OkStatus();
+}
+
+absl::Status OsqpSolver::UpdatePolishRefineIter(
+    const int polish_refine_iter_new) {
+  if (!IsInitialized()) {
+    return absl::FailedPreconditionError("OsqpSolver is not initialized.");
+  }
+  if (polish_refine_iter_new <= 0.0) {
+    return absl::InvalidArgumentError(absl::StrCat(
+        "Invalid polish_refine_iter value: ", polish_refine_iter_new));
+  }
+  if (osqp_update_polish_refine_iter(workspace_.get(),
+                                     polish_refine_iter_new) != 0) {
+    return absl::UnknownError(
+        "osqp_update_polish_refine_iter unexpectedly failed.");
+  }
+  return absl::OkStatus();
+}
+
+absl::Status OsqpSolver::UpdateVerbose(const bool verbose_new) {
+  if (!IsInitialized()) {
+    return absl::FailedPreconditionError("OsqpSolver is not initialized.");
+  }
+  if (osqp_update_verbose(workspace_.get(), verbose_new) != 0) {
+    return absl::UnknownError("osqp_update_verbose unexpectedly failed.");
+  }
+  return absl::OkStatus();
+}
+
+absl::Status OsqpSolver::UpdateScaledTermination(
+    const bool scaled_termination_new) {
+  if (!IsInitialized()) {
+    return absl::FailedPreconditionError("OsqpSolver is not initialized.");
+  }
+  if (osqp_update_scaled_termination(workspace_.get(),
+                                     scaled_termination_new) != 0) {
+    return absl::UnknownError(
+        "osqp_update_scaled_termination unexpectedly failed.");
+  }
+  return absl::OkStatus();
+}
+
+absl::Status OsqpSolver::UpdateCheckTermination(
+    const c_int check_termination_new) {
+  if (!IsInitialized()) {
+    return absl::FailedPreconditionError("OsqpSolver is not initialized.");
+  }
+  if (check_termination_new < 0.0) {
+    return absl::InvalidArgumentError(absl::StrCat(
+        "Invalid check_termination value: ", check_termination_new));
+  }
+  if (osqp_update_check_termination(workspace_.get(), check_termination_new) !=
+      0) {
+    return absl::UnknownError(
+        "osqp_update_check_termination unexpectedly failed.");
+  }
+  return absl::OkStatus();
+}
+
+absl::Status OsqpSolver::UpdateWarmStart(const bool warm_start_new) {
+  if (!IsInitialized()) {
+    return absl::FailedPreconditionError("OsqpSolver is not initialized.");
+  }
+  if (osqp_update_warm_start(workspace_.get(), warm_start_new) != 0) {
+    return absl::UnknownError("osqp_update_warm_start unexpectedly failed.");
+  }
+  return absl::OkStatus();
+}
+
+absl::Status OsqpSolver::UpdateTimeLimit(const double time_limit_new) {
   if (!IsInitialized()) {
     return absl::FailedPreconditionError("OsqpSolver is not initialized.");
   }
