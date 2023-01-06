@@ -17,6 +17,7 @@
 
 // A C++ wrapper for OSQP (https://osqp.org/). See README.md for an overview.
 
+#include <cstdint>
 #include <memory>
 #include <string>
 
@@ -30,7 +31,13 @@ namespace osqp {
 
 // Must match the typedef in osqp/include/glob_opts.h (if not, it will trigger
 // a static_assert failure in osqp++.cc).
+// For consistency with ospq, this must be int on 32-bit systems, and
+// long long on 64-bit systems.
+#if INTPTR_MAX == INT64_MAX
 using c_int = long long;  // NOLINT
+#else
+using c_int = int;  // NOLINT
+#endif
 
 // A memory-safe mirror of the OSQPData struct defined in osqp/include/types.h.
 // The number of variables and constraints is implied by the shape of

@@ -36,10 +36,16 @@ static_assert(
 static_assert(std::is_same_v<c_float, double>,
               "OSQP's c_float typedef is unexpectedly not the same as double");
 
-static_assert(sizeof(OSQPSettings) == 176,
+#ifdef DLONG
+#define OSQP_SETTINGS_SIZE 176
+#else
+#define OSQP_SETTINGS_SIZE 144
+#endif
+static_assert(sizeof(OSQPSettings) == OSQP_SETTINGS_SIZE,
               "The size of OSQPSettings has changed unexpectedly. Make sure "
               "that the map between ::OSQPSettings and osqp::OsqpSettings "
               "remains up to date.");
+#undef OSQP_SETTINGS_SIZE
 
 namespace osqp {
 
