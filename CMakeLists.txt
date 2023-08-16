@@ -53,7 +53,7 @@ if (NOT TARGET osqpstatic)
   message(STATUS "osqp-cpp: `osqp` targets not found. Attempting to fetch contents...")
   FetchContent_Declare(
     osqp
-    GIT_REPOSITORY https://github.com/osqp/osqp
+    GIT_REPOSITORY https://github.com/osqp/osqp.git
     GIT_TAG        v0.6.3
   )
   FetchContent_MakeAvailable(osqp)
