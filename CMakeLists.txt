@@ -54,7 +54,7 @@ if (NOT TARGET osqpstatic)
   FetchContent_Declare(
     osqp
     GIT_REPOSITORY https://github.com/oxfordcontrol/osqp.git
-    GIT_TAG        origin/master
+    GIT_TAG        v0.6.0
   )
   FetchContent_MakeAvailable(osqp)
 else()
