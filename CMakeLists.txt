@@ -81,6 +81,7 @@ endif()
 
 message(STATUS "osqp-cpp: Adding osqp-cpp library...")
 add_library(osqp-cpp src/osqp++.cc)
+set_target_properties(osqp-cpp PROPERTIES PUBLIC_HEADER "include/osqp++.h")
 target_link_libraries(osqp-cpp PUBLIC absl::strings absl::status absl::statusor Eigen3::Eigen PRIVATE osqpstatic ${CMAKE_DL_LIBS})
 target_include_directories(osqp-cpp PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>")
 message(STATUS "osqp-cpp: Added osqp-cpp library.")
